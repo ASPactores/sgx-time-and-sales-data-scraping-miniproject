@@ -1,6 +1,7 @@
 from Resources.PageObjects.Page import Page
 from Drivers.Chrome.Config import DriverConfig
-from Uses.UseData import UseData
+
+# from Uses.UseData import UseData
 
 # import os
 import re
