@@ -6,20 +6,21 @@ from Uses.UseData import UseData
 
 
 class DriverConfig:
+    """This class contains the configuration for the Chrome driver."""
+
     if not os.path.isdir(UseData.ABSOLUTE_DOWNLOAD_DIRECTORY):
         os.mkdir(UseData.ABSOLUTE_DOWNLOAD_DIRECTORY)
-    __date_now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
 
-    service = Service(executable_path=UseData.CHROME_EXECUTABLE_PATH)
-    chrome_options = webdriver.ChromeOptions()
+    _date_now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     download_directory = os.path.abspath(
-        f"{UseData.DOWNLOAD_DIRECTORY}/{__date_now}_files"
+        f"{UseData.DOWNLOAD_DIRECTORY}/{_date_now}_files"
     )
     if not os.path.isdir(download_directory):
         os.mkdir(download_directory)
-    prefs = {"download.default_directory": download_directory}
-    chrome_options.add_experimental_option("prefs", prefs)
-    driver = webdriver.Chrome(options=chrome_options)
 
-    def get_driver(self):
-        return self.driver
+    _service = Service(executable_path=UseData.CHROME_EXECUTABLE_PATH)
+    _chrome_options = webdriver.ChromeOptions()
+    _prefs = {"download.default_directory": download_directory}
+    _chrome_options.add_experimental_option("prefs", _prefs)
+
+    driver = webdriver.Chrome(options=_chrome_options)
