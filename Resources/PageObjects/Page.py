@@ -36,13 +36,11 @@ class Page:
 
     def select_type_of_data(self, type_of_data: str) -> None:
         drop_down = self.get_dropdown_element(Locators.DROP_DOWN_TRIGGER)[0]
-        print(drop_down.get_attribute("outerHTML"))
         self.open_dropdown(drop_down)
         self.select_dropdown_item(Locators.DROP_DOWN_ITEM_SELECT(type_of_data))
 
     def select_date(self, date: str) -> None:
         drop_down = self.get_dropdown_element(Locators.DROP_DOWN_TRIGGER)[1]
-        print(drop_down.get_attribute("outerHTML"))
         self.open_dropdown(drop_down)
         self.select_dropdown_item(Locators.DROP_DOWN_ITEM_SELECT(date))
 
