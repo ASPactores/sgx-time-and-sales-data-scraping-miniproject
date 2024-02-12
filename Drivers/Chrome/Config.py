@@ -8,19 +8,29 @@ from Uses.UseData import UseData
 class DriverConfig:
     """This class contains the configuration for the Chrome driver."""
 
-    if not os.path.isdir(UseData.ABSOLUTE_DOWNLOAD_DIRECTORY):
-        os.mkdir(UseData.ABSOLUTE_DOWNLOAD_DIRECTORY)
+    def __init__(self, headless=False) -> None:
+        if not os.path.isdir(UseData.ABSOLUTE_DOWNLOAD_DIRECTORY):
+            os.mkdir(UseData.ABSOLUTE_DOWNLOAD_DIRECTORY)
 
-    _date_now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-    download_directory = os.path.abspath(
-        f"{UseData.DOWNLOAD_DIRECTORY}/{_date_now}_files"
-    )
-    if not os.path.isdir(download_directory):
-        os.mkdir(download_directory)
+        self._date_now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+        self.download_directory = os.path.abspath(
+            f"{UseData.DOWNLOAD_DIRECTORY}/{self._date_now}_files"
+        )
+        if not os.path.isdir(self.download_directory):
+            os.mkdir(self.download_directory)
 
-    _service = Service(executable_path=UseData.CHROME_EXECUTABLE_PATH)
-    _chrome_options = webdriver.ChromeOptions()
-    _prefs = {"download.default_directory": download_directory}
-    _chrome_options.add_experimental_option("prefs", _prefs)
+        self._service = Service(executable_path=UseData.CHROME_EXECUTABLE_PATH)
+        self._chrome_options = webdriver.ChromeOptions()
+        self._prefs = {"download.default_directory": self.download_directory}
+        self._chrome_options.add_experimental_option("prefs", self._prefs)
 
-    driver = webdriver.Chrome(options=_chrome_options)
+        if headless:
+            self._chrome_options.add_argument("--headless")
+            userAgent = (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/84.0.4147.56 Safari/537.36"
+            )
+            self._chrome_options.add_argument(f"user-agent={userAgent}")
+
+        self.driver = webdriver.Chrome(options=self._chrome_options)

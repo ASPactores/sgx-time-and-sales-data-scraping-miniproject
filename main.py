@@ -1,4 +1,6 @@
 from Uses.UseCase import UseCase
+from Drivers.Chrome.Config import DriverConfig
+
 import re
 import argparse
 from datetime import date, datetime
@@ -26,13 +28,18 @@ def parse_arguments():
         help="Specify the date for data retrieval. Use 'Today' for current data, or input in the format: "
         "[Three-letter month abbreviation]-[DD]-[YYYY] (e.g., 'Feb-10-2024').",
     )
+    parser.add_argument(
+        "--headless",
+        action="store_true",
+        help="Run the program in headless mode.",
+    )
     return parser.parse_args()
 
 
 def main():
     setup_logging()
     args = parse_arguments()
-    download_files = UseCase()
+    download_files = UseCase(DriverConfig(args.headless))
 
     if args.date.lower() == "today":
         download_files.execute(date.today().strftime("%d %b %Y"))
