@@ -10,8 +10,23 @@ import datetime
 import os
 
 
+class FileManager:
+    def __init__(self, expected_files):
+        self.expected_files = expected_files
+
+    def is_file_downloaded(self, file_name: str, timeout: int = 30) -> bool:
+        end_time = time.time() + timeout
+        while True:
+            for file in os.listdir(DriverConfig.download_directory):
+                if re.search(file_name, file):
+                    return True
+            if time.time() > end_time:
+                return False
+            time.sleep(1)
+
+
 class UseCase:
-    def __init__(self) -> None:
+    def __init__(self):
         self.page = Page(DriverConfig.driver)
         self.page.driver.maximize_window()
         self.page.driver.execute_script("window.scrollTo(0, 233)")
@@ -28,22 +43,22 @@ class UseCase:
             r"TC_structure.dat",
         ]
         self.FAILED_DOWNLOADS = []
-
-    def is_file_downloaded(self, file_name: str, timeout: int = 30) -> bool:
-        end_time = time.time() + timeout
-        while True:
-            for file in os.listdir(DriverConfig.download_directory):
-                if re.search(file_name, file):
-                    return True
-
-            if time.time() > end_time:
-                return False
-
-            time.sleep(1)
+        self.file_manager = FileManager(self.EXPECTED_FILES)
 
     def execute(self, date) -> None:
+        log = self._initialize_logger()
+        try:
+            if not self.page.does_date_exist(date):
+                raise Exception(f"No data available for the specified date: {date}")
+            for index, data_type in enumerate(self.DATA_TYPES):
+                self._download_data(data_type, date, index, log)
+            self._handle_download_recovery(date, log)
+        except (TimeoutException, NoSuchElementException, Exception) as e:
+            log.error(e)
+        finally:
+            self.page.driver.quit()
 
-        # Create log file
+    def _initialize_logger(self):
         logpath = "./logs_files/"
         log_file_name = (
             f"{logpath}log_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
@@ -56,46 +71,32 @@ class UseCase:
         )
         log = logging.getLogger("__name__")
         log.setLevel(logging.INFO)
+        return log
 
-        try:
-            if (self.page.does_date_exist(date)) is False:
-                raise Exception("No data available for the specified date: {date}")
-            for index, data_type in enumerate(self.DATA_TYPES):
-                log.info(f"Downloading {data_type} data")
-                self.page.select_type_of_data(data_type)
+    def _download_data(self, data_type, date, index, log):
+        log.info(f"Downloading {data_type} data")
+        self.page.select_type_of_data(data_type)
+        self.page.select_date(date)
+        self.page.download_file()
+        time.sleep(0.5)
+        if not self.file_manager.is_file_downloaded(self.EXPECTED_FILES[index]):
+            log.error(f"Failed to download {data_type} data on time")
+            self.FAILED_DOWNLOADS.append(data_type)
+        else:
+            log.info(f"SUCCESS: Downloaded {data_type} data")
+
+    def _handle_download_recovery(self, date, log):
+        if len(os.listdir(DriverConfig.download_directory)) == 4:
+            log.info("SUCCESS: All files have been downloaded successfully")
+        else:
+            for file in self.FAILED_DOWNLOADS:
+                log.info(f"Redownloading {file} data")
+                self.page.select_type_of_data(file)
                 self.page.select_date(date)
                 self.page.download_file()
-                time.sleep(0.5)
-                if not self.is_file_downloaded(self.EXPECTED_FILES[index]):
-                    log.error(f"Failed to download {data_type} data on time")
-                    self.FAILED_DOWNLOADS.append(data_type)
+                if not self.file_manager.is_file_downloaded(
+                    self.EXPECTED_FILES[self.DATA_TYPES.index(file)]
+                ):
+                    log.error(f"Failed to download {file} data on time")
                 else:
-                    log.info(f"SUCCESS: Downloaded {data_type} data")
-
-            if len(os.listdir(DriverConfig.download_directory)) == 4:
-                log.info("SUCCESS: All files have been downloaded successfully")
-            else:
-                # Download Recovery
-                for file in self.FAILED_DOWNLOADS:
-                    log.info(f"Redownloading {file} data")
-                    self.page.select_type_of_data(file)
-                    self.page.select_date(date)
-                    self.page.download_file()
-                    if not self.is_file_downloaded(
-                        self.EXPECTED_FILES[self.DATA_TYPES.index(file)]
-                    ):
-                        log.error(f"Failed to download {data_type} data on time")
-                    else:
-                        log.info(f"SUCCESS: Downloaded {data_type} data")
-
-        except TimeoutException as e:
-            log.error(e)
-
-        except NoSuchElementException as e:
-            log.error(e)
-
-        except Exception as e:
-            log.error(e)
-
-        finally:
-            self.page.driver.quit()
+                    log.info(f"SUCCESS: Downloaded {file} data")
