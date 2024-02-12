@@ -1,5 +1,4 @@
 from Resources.PageObjects.Page import Page
-from Drivers.Chrome.Config import DriverConfig
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
@@ -21,13 +20,14 @@ class FileManager:
             Check if the file has been downloaded within the specified timeout period.
     """
 
-    def __init__(self, expected_files):
+    def __init__(self, expected_files, driver_config):
         self.expected_files = expected_files
+        self.driver_config = driver_config
 
     def is_file_downloaded(self, file_name: str, timeout: int = 30) -> bool:
         end_time = time.time() + timeout
         while True:
-            for file in os.listdir(DriverConfig.download_directory):
+            for file in os.listdir(self.driver_config.download_directory):
                 if re.search(file_name, file):
                     return True
             if time.time() > end_time:
@@ -41,6 +41,7 @@ class UseCase:
     Attributes:
         page (Page): An instance of the Page class to interact
             with the SGX website.
+        driver_config (DriverConfig): An instance of the DriverConfig class to configure the Chrome driver.
         DATA_TYPES (list): A list of data types to download.
         EXPECTED_FILES (list): A list of regular expressions to match the names of the expected files.
         FAILED_DOWNLOADS (list): A list to store the data types that failed to download.
@@ -48,10 +49,11 @@ class UseCase:
             downloaded.
     """
 
-    def __init__(self):
-        self.page = Page(DriverConfig.driver)
+    def __init__(self, driver_config):
+        self.page = Page(driver_config.driver)
         self.page.driver.maximize_window()
         self.page.driver.execute_script("window.scrollTo(0, 233)")
+        self.driver_config = driver_config
         self.DATA_TYPES = [
             "Tick",
             "Tick Data Structure",
@@ -65,13 +67,13 @@ class UseCase:
             r"TC_structure.dat",
         ]
         self.FAILED_DOWNLOADS = []
-        self.file_manager = FileManager(self.EXPECTED_FILES)
+        self.file_manager = FileManager(self.EXPECTED_FILES, driver_config)
 
     # Execute the use case to download data for the specified date.
     def execute(self, date) -> None:
         log = self._initialize_logger()
         try:
-            log.info("Starting data download")
+            log.info(f"Starting data download for date: {date}")
             if not self.page.does_date_exist(date):
                 raise Exception(f"No data available for the specified date: {date}")
             for index, data_type in enumerate(self.DATA_TYPES):
@@ -89,14 +91,16 @@ class UseCase:
         log_file_name = (
             f"{logpath}log_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
         )
-        logging.basicConfig(
-            filename=log_file_name,
-            format="[%(asctime)s] [Line %(lineno)d] [%(levelname)s] %(message)s",
-            filemode="w",
-            level=logging.INFO,
+        log = logging.getLogger()
+        log_handler = logging.FileHandler(filename=log_file_name, mode="w")
+        log_handler.setFormatter(
+            logging.Formatter(
+                "[%(asctime)s] [Line %(lineno)d] [%(levelname)s] %(message)s"
+            )
         )
-        log = logging.getLogger("__name__")
+        log.addHandler(log_handler)
         log.setLevel(logging.INFO)
+
         return log
 
     # Download the specified data type for the given date.
@@ -114,7 +118,7 @@ class UseCase:
 
     # Handle the recovery of failed downloads by redownloading the files up to a maximum number of three (3) retries.
     def _handle_download_recovery(self, date, log, maxRetry=3):
-        if len(os.listdir(DriverConfig.download_directory)) == 4:
+        if len(os.listdir(self.driver_config.download_directory)) == 4:
             log.info("SUCCESS: All files have been downloaded successfully")
         else:
             retries = 0
