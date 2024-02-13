@@ -15,6 +15,8 @@ This program is a utility designed to retrieve specific files from the [SGX webs
 - TC\_\*.txt
 - TC_structure.dat
 
+These files will be saved to the directory `./downloaded_files/{datetime}`. A log file will also be generated to record the program's activities. The log file will be saved to the directory `./logs_files/log_{datetime}.log`.
+
 In the event of a download failure, the program is equipped to automatically retry fetching the missing files up to **three times**.
 
 ## Running the program
