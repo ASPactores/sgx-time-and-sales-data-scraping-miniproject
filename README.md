@@ -18,6 +18,11 @@ In the event of a download failure, the program is equipped to automatically ret
 
 ## Running the program
 
+### Running the virtual environment
+
+- Run `pipenv install` to install the dependencies
+- Run `pipenv shell` to spin up a virtual environment
+
 ### Command Line Options:
 
 | Option            | Description                                                                                                                                                                                        |
