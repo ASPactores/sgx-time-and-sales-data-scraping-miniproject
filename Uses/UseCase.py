@@ -91,7 +91,7 @@ class UseCase:
         log_file_name = (
             f"{logpath}log_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
         )
-        log = logging.getLogger()
+        log = logging.getLogger("UseCaseLogger")
         log_handler = logging.FileHandler(filename=log_file_name, mode="w")
         log_handler.setFormatter(
             logging.Formatter(

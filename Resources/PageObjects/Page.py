@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from Resources.Locators import Locators
 from Uses.UseData import UseData
+import logging
 
 
 class Page:
@@ -65,6 +66,10 @@ class Page:
             EC.presence_of_element_located(Locators.DROP_DOWN_ITEM_CONTAINER)
         )
         status = bool(select.find_elements(*Locators.DROP_DOWN_ITEM_SELECT(date)))
+
+        if not status:
+            log = logging.getLogger("UseCaseLogger")
+            log.error(f"Available data: {select.text.split('\n')}")
 
         # close the drop down by clicking the trigger again
         self.open_dropdown(drop_down)
