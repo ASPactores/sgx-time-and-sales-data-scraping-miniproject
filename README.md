@@ -20,8 +20,12 @@ In the event of a download failure, the program is equipped to automatically ret
 
 ### Command Line Options:
 
-    | Command | Description |
-    | :------ | :---------- |
+| Option            | Description                                                                                                                                                                                        |
+| :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--date [string]` | Facilitates the selection of download dates. Follows the format: `[Three-letter Month Abbreviation]-[DD]-[YYYY]`. Alternatively, users can also use `Today` to download data for the current date. |
+| `--headless`      | Runs the web scraper in headless mode.                                                                                                                                                             |
 
-args:
---document-date [string] "Feb-20-2024" or "Today"
+### Example usage
+
+- `python main.py --date Today --headless`
+- `python main.py --date Feb-08-2024`
