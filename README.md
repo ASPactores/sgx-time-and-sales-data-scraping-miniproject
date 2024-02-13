@@ -5,6 +5,7 @@
 - Google Chrome Version **121.0.6167.161**
 - Pipenv (can be installed using `pip install pipenv`)
 - Python version 3.12
+- Windows 11, preferably
 
 ### Project implementation details
 
@@ -28,12 +29,24 @@ In the event of a download failure, the program is equipped to automatically ret
 
 ### Command line options:
 
-| Option            | Description                                                                                                                                                                                        |
-| :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--date [string]` | Facilitates the selection of download dates. Follows the format: `[Three-letter Month Abbreviation]-[DD]-[YYYY]`. Alternatively, users can also use `Today` to download data for the current date. |
-| `--headless`      | Runs the web scraper in headless mode.                                                                                                                                                             |
+| Option                   | Description                                                                                                                                                                                        |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--number_of_days [int]` | The number of days to download data for. NOTE: If you want to download data for all dates, simply omit specifying a number                                                                         |
+| `--date [string]`        | Facilitates the selection of download dates. Follows the format: `[Three-letter Month Abbreviation]-[DD]-[YYYY]`. Alternatively, users can also use `Today` to download data for the current date. |
+| `--headless` (Optional)  | Runs the web scraper in headless mode.                                                                                                                                                             |
 
 ### Example usage:
 
+To download data from multiple dates:
+
+- `python main.py --number_of_days 5 --headless`
+- `python main.py --number_of_days --headless`
+- `python main.py --number_of_days`
+
+To download data for a specific date:
+
 - `python main.py --date Today --headless`
 - `python main.py --date Feb-08-2024`
+- `python main.py --date Feb-12-2024 --headless`
+
+**NOTE:** `--number_of_days` and `--date` are mutually exclusive. Both cannot be used together.
