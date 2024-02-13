@@ -2,8 +2,9 @@
 
 ### Prerequisite
 
-- Google Chrome Version <u>**121.0.6167.161**</u>
+- Google Chrome Version **121.0.6167.161**
 - Pipenv (can be installed using `pip install pipenv`)
+- Python version 3.12
 
 ### Project implementation details
 
@@ -14,23 +15,23 @@ This program is a utility designed to retrieve specific files from the [SGX webs
 - TC\_\*.txt
 - TC_structure.dat
 
-In the event of a download failure, the program is equipped to automatically retry fetching the missing files up to **_three times_**.
+In the event of a download failure, the program is equipped to automatically retry fetching the missing files up to **three times**.
 
 ## Running the program
 
-### Running the virtual environment
+### Running the virtual environment:
 
-- Run `pipenv install` to install the dependencies
-- Run `pipenv shell` to spin up a virtual environment
+- Run `pipenv install` or `python -m pipenv install` to install the dependencies
+- Run `pipenv shell` or `python -m pipenv shell` to spin up a virtual environment
 
-### Command Line Options:
+### Command line options:
 
 | Option            | Description                                                                                                                                                                                        |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--date [string]` | Facilitates the selection of download dates. Follows the format: `[Three-letter Month Abbreviation]-[DD]-[YYYY]`. Alternatively, users can also use `Today` to download data for the current date. |
 | `--headless`      | Runs the web scraper in headless mode.                                                                                                                                                             |
 
-### Example usage
+### Example usage:
 
 - `python main.py --date Today --headless`
 - `python main.py --date Feb-08-2024`
