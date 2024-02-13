@@ -80,6 +80,7 @@ class Page:
 
         return status
 
+    # Method to get the available dates in the drop down
     def get_available_dates(self) -> list:
         drop_down = self.get_dropdown_element(Locators.DROP_DOWN_TRIGGER)[1]
         self.open_dropdown(drop_down)

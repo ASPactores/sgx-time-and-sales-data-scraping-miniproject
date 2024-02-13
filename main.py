@@ -34,7 +34,9 @@ def parse_arguments():
         type=int,
         nargs="?",
         const=-1,
-        help="Specify the number of days to retrieve data for. Default is 0, which retrieves all available data.",
+        help="Specify the number of days for data retrieval. "
+        "If you wish to retrieve all available data from all dates, "
+        "simply omit specifying a number.",
     )
     parser.add_argument(
         "--headless",
@@ -49,18 +51,6 @@ def main():
     args = parse_arguments()
     download_files = UseCase(DriverConfig(args.headless))
 
-    # if args.number_of_days:
-    #     download_files.execute_download_daily_files(args.number_of_days)
-    # else:
-    #     if args.date.lower() == "today":
-    #         download_files.execute_download_all_files(date.today().strftime("%d %b %Y"))
-    #     elif re.match(r"[A-Z][a-z]{2}-\d{2}-\d{4}", args.date):
-    #         download_files.execute_download_all_files(
-    #             datetime.strptime(args.date, "%b-%d-%Y").strftime("%d %b %Y")
-    #         )
-    #     else:
-    #         logging.error("Invalid date format")
-    #         exit(1)
     if args.date:
         if args.date.lower() == "today":
             download_files.execute(date=date.today().strftime("%d %b %Y"))

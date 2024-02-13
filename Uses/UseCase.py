@@ -70,8 +70,8 @@ class UseCase:
         self.file_manager = FileManager(self.EXPECTED_FILES, driver_config)
         self.log = self._initialize_logger()
 
+    # Main method to execute the use case.
     def execute(self, date=None, number_of_days=None):
-        print("Dates", date, "Number of Days", number_of_days)
         try:
             if date:
                 self._execute_download_all_files(date)
