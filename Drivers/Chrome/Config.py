@@ -13,9 +13,10 @@ class DriverConfig:
             os.mkdir(UseData.ABSOLUTE_DOWNLOAD_DIRECTORY)
 
         self._date_now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-        self.download_directory = os.path.abspath(
+        self.download_relative_directory = (
             f"{UseData.DOWNLOAD_DIRECTORY}/{self._date_now}_files"
         )
+        self.download_directory = os.path.abspath(self.download_relative_directory)
         if not os.path.isdir(self.download_directory):
             os.mkdir(self.download_directory)
 

@@ -79,3 +79,16 @@ class Page:
         )
 
         return status
+
+    def get_available_dates(self) -> list:
+        drop_down = self.get_dropdown_element(Locators.DROP_DOWN_TRIGGER)[1]
+        self.open_dropdown(drop_down)
+        select = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(Locators.DROP_DOWN_ITEM_CONTAINER)
+        )
+        dates = select.text.split("\n")
+        self.open_dropdown(drop_down)
+        WebDriverWait(self.driver, 10).until(
+            EC.invisibility_of_element_located(Locators.DROP_DOWN_ITEM_CONTAINER)
+        )
+        return dates
