@@ -1,4 +1,4 @@
-# sgx-time-and-sales-scraping-miniproject
+# sgx-time-and-sales-data-scraping-miniproject
 
 ### Prerequisite
 
